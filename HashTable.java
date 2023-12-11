@@ -3,9 +3,11 @@ import java.util.LinkedList;
 import java.util.NoSuchElementException;
 
 public class HashTable<K, V> implements Iterable<KeyValue<K, V>> {
+
+    private int collisions;
     private static final int INITIAL_CAPACITY = 16;
     private static final double LOAD_FACTOR = 0.80d;
-    private LinkedList<KeyValue<K, V>>[] slots;
+    public LinkedList<KeyValue<K, V>>[] slots;
     private int count;
     private int capacity;
 
@@ -25,11 +27,19 @@ public class HashTable<K, V> implements Iterable<KeyValue<K, V>> {
     public void add(K key, V value) {
         growIfNeeded();
         int slotNumber = findSlotNumber(key);
+
         if (slots[slotNumber] == null) {
             slots[slotNumber] = new LinkedList<>();
+        } else {
+            collisions++; // Увеличиваем счетчик коллизий
         }
+
         slots[slotNumber].add(new KeyValue<>(key, value));
         count++;
+    }
+
+    public int getCollisions() {
+        return collisions;
     }
 
     private int findSlotNumber(K key) {
